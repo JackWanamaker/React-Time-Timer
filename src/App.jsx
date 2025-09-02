@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -7,6 +7,28 @@ import Para from './Para'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [arcAngle, setArcAngle] = useState(359.99)
+  const [timeLeft, setTimeLeft] = useState(30);
+
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setArcAngle(359.99);
+      return; // stop when 0
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+      if (timeLeft == 30){
+        setArcAngle(359.99)
+      }
+      else {
+        setArcAngle((timeLeft/30)*360)
+      }
+    }, 1000);
+
+    return () => clearInterval(timer); // cleanup when unmounted
+  }, [timeLeft]);
 
   return (
     <>
@@ -27,7 +49,7 @@ function App() {
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
       </div>
-      <Arc radius={80} startAngle={0} endAngle={359.99} stroke="black" strokeWidth={2} />
+      <Arc radius={80} startAngle={0} endAngle={arcAngle} stroke="black" strokeWidth={2} />
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
