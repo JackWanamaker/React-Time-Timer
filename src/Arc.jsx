@@ -1,4 +1,4 @@
-function polarToCartesian(cx, cy, angleDeg) {
+function polarToCartesian(cx, cy, r, angleDeg) {
     const angleRad = (angleDeg - 90) * (Math.PI / 180);
     return {
       x: cx + r * Math.cos(angleRad),
@@ -7,12 +7,16 @@ function polarToCartesian(cx, cy, angleDeg) {
   }
 
   function generateArc(cx, cy, r, startAngle, endAngle) {
-    const end = polarToCartesian(100, 100, 80, 270);
-    print(end)
+    const start = polarToCartesian(cx, cy, r, startAngle);
+    const end = polarToCartesian(cx, cy, r, endAngle);
+    console.log(start.x)
+    console.log(start.y)
+    console.log(end.x)
+    console.log(end.y)
     const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-    print(largeArcFlag)
-    const returnValue = `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`
-    print(returnValue)
+    console.log(largeArcFlag)
+    const returnValue = `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y} L ${start.x} ${end.y} Z`
+    console.log(returnValue)
     return returnValue;
   }
 
@@ -24,8 +28,8 @@ function polarToCartesian(cx, cy, angleDeg) {
           <path
         d={pathData}
         fill="#0000FFA0"
-        stroke="black"
-        stroke-width="2" />
+        stroke={stroke}
+        strokeWidth={strokeWidth} />
       </svg>
     )
   }

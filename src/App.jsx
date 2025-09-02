@@ -27,7 +27,7 @@ function App() {
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
       </div>
-      <Para></Para>
+      <Arc radius={80} startAngle={0} endAngle={359.99} stroke="black" strokeWidth={2} />
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
