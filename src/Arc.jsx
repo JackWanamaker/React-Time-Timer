@@ -9,14 +9,14 @@ function polarToCartesian(cx, cy, r, angleDeg) {
   function generateArc(cx, cy, r, startAngle, endAngle) {
     const start = polarToCartesian(cx, cy, r, startAngle);
     const end = polarToCartesian(cx, cy, r, endAngle);
-    console.log(start.x)
-    console.log(start.y)
-    console.log(end.x)
-    console.log(end.y)
+    //console.log(start.x)
+    //console.log(start.y)
+    //console.log(end.x)
+    //console.log(end.y)
     const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-    console.log(largeArcFlag)
+    //console.log(largeArcFlag)
     const returnValue = `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y} L ${start.x} ${start.y+r} Z`
-    console.log(returnValue)
+    //console.log(returnValue)
     return returnValue;
   }
 
