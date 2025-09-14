@@ -3,38 +3,77 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import Arc from './Arc'
-import Para from './Para'
 
 function App() {
+  //Template variable
   const [count, setCount] = useState(0)
-  const [arcAngle, setArcAngle] = useState(359.99)
-  const timerLength = useRef(600000)
-  const refreshTime = useRef(5)
-  const [timeLeft, setTimeLeft] = useState(timerLength.current);
-  const startTime = useRef(Date.now())
+  const [arcAngle, setArcAngle] = useState(359.99);
+  const [timerLength, setTimerLength] = useState(1);
+  const refreshTime = useRef(5);
+  const [timeLeft, setTimeLeft] = useState(Infinity);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const startTime = useRef(Date.now());
+  const [isRunning, setIsRunning] = useState(false);
+
+  function handleChange(e) {
+    setTimerLength(e.target.value)
+  }
+
+  function startTimer() {
+    setIsRunning(true);
+    startTime.current = Date.now();
+    console.log("Started");
+    console.log("Timer Length Currently " + timerLength);
+  }
+
+  function resumeTimer() {
+    setIsRunning(true);
+    startTime.current = Date.now()
+    console.log("Resumed");
+    console.log("Time Left: " + timeLeft);
+  }
+
+  function pauseTimer() {
+    setIsRunning(false);
+    setTimerLength(timerLength)
+    console.log("Paused")
+  }
+
+  function stopTimer() {
+    setIsRunning(false);
+    setTimeLeft(Infinity);
+    setArcAngle(359.99);
+    console.log("Stopped");
+  }
 
   useEffect(() => {
-    if (timeLeft <= 0) {
-      setArcAngle(359.99);
-      return; // stop when 0
-    }
-
-    const timer = setInterval(() => {
+    if (isRunning) {
+      if (timeLeft <= 0) {
+        console.log("I'm here")
+        stopTimer();
+        return; // stop when 0
+      }
+      
+      const timer = setInterval(() => {
       let currentTime = Date.now()
-      console.log("Start Time: " + startTime.current)
-      console.log("Current Time: " + currentTime)
-      setTimeLeft(timerLength.current - (currentTime - startTime.current));
-      console.log(timeLeft)
-      if (timeLeft == timerLength.current){
+      //console.log("Start Time: " + startTime.current)
+      //console.log("Current Time: " + currentTime)
+      //console.log(currentTime-startTime.current)
+      setTimeElapsed(timeElapsed + (currentTime));
+      setTimeLeft(timerLength*1000 - (currentTime - startTime.current));
+      //console.log(timeLeft)
+      if (timeLeft == timerLength*1000){
         setArcAngle(359.99)
       }
       else {
-        setArcAngle((timeLeft/timerLength.current)*360)
+        setArcAngle((timeLeft/(timerLength*1000))*360)
       }
     }, refreshTime.current);
-
     return () => clearInterval(timer); // cleanup when unmounted
-  }, [timeLeft]);
+      
+    }
+
+  }, [isRunning, timeLeft]);
 
   return (
     <>
@@ -56,8 +95,12 @@ function App() {
         </p>
       </div>
       <Arc radius={80} startAngle={0} endAngle={arcAngle} stroke="black" strokeWidth={1.5} />
-       <label for="quantity">Quantity (between 1 and 5):</label>
-        <input type="number" id="quantity" name="quantity" min="1" max="5"/> 
+      <button onClick={startTimer}>Start Timer </button>
+      <button onClick={resumeTimer}>Resume Timer </button>
+      <button onClick={pauseTimer}>Pause Timer </button>
+      <button onClick={stopTimer}>Stop Timer</button>
+      <label>Time (seconds):</label>
+        <input type="number" value={timerLength} onChange={handleChange} min="1" max="60"/>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
