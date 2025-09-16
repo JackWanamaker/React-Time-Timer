@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import Arc from './Arc'
 
@@ -12,7 +10,8 @@ function App() {
   const startTime = useRef(Date.now());
   const [cachedTime, setCachedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-
+  const [angleActive, setAngleActive] = useState(false);
+ 
   function handleChange(e) {
     setTimerLength(e.target.value);
   }
@@ -20,7 +19,6 @@ function App() {
   function startTimer() {
     startTime.current = Date.now();
     setTimeLeft(Infinity);
-    setArcAngle(359.99);
     setCachedTime(0);
     setIsRunning(true);
     console.log("Started");
@@ -66,12 +64,13 @@ function App() {
       //setTimeElapsed(timeElapsed + (currentTime));
       setTimeLeft(((timerLength*1000) - cachedTime) - (currentTime - startTime.current));
       //console.log(timeLeft);
-      if (timeLeft == timerLength*1000){
+      if (timeLeft == Infinity) {
         setArcAngle(359.99);
       }
       else {
         setArcAngle((timeLeft/(timerLength*1000))*360);
       }
+      console.log("Current Arc Angle: " + arcAngle);
     }, refreshTime.current);
     return () => clearInterval(timer); // cleanup when unmounted
       
