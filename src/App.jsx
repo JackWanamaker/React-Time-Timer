@@ -17,7 +17,7 @@ function App() {
     let numArray = []
     const myValue = e.target.value;
     let colonsPresent = 0;
-    let charsPresent = [false, false, false];
+    let charsPresent = [0, 0, 0];
 
     //Returns the original timer Value if the lengths are too short, too long, or the last value is not s
     if (myValue.length < 10 | myValue.length > 12 | (myValue.length === 12 & myValue[11] != "s")) {
@@ -25,10 +25,11 @@ function App() {
     }
     
     console.log(myValue);
+    console.log(myValue.length);
     
     //Adds all numbers present to numArray, tracks number of colons, and checks digits present
     for (let i = 0; i < myValue.length; i++) {
-      let tempVal = parseInt(myValue);
+      let tempVal = parseInt(myValue[i]);
 
       if (!isNaN(tempVal)) {
         numArray[numArray.length] = tempVal;
@@ -54,11 +55,6 @@ function App() {
 
     //If any values besides the numbers were modifited, we return the original value.
     if (colonsPresent != 2 | charsPresent[0] != 1 | charsPresent[1] != 1 | charsPresent[2] != 1) {
-      console.log("Invalid Chars");
-      console.log("Colons: " + colonsPresent);
-      console.log("H Chars: " + charsPresent[0]);
-      console.log("M Chars: " + charsPresent[1]);
-      console.log("S Chars: " + charsPresent[2]);
       return;
     }
     //Otherwise, we try and get the new one
