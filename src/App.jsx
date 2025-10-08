@@ -3,6 +3,7 @@ import './App.css'
 import Arc from './Arc'
 
 function App() {
+  const regex = /[0-9]{1,3}h:[0-9]{1,3}m:[0-9]{1,3}s/;
   const [arcAngle, setArcAngle] = useState(359.99);
   const [timerLength, setTimerLength] = useState(1);
   const refreshTime = 5;
@@ -12,15 +13,22 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [timerValue, setTimerValue] = useState("00h:00m:00s");
   const [timerValueArray, setTimerValueArray] = useState([0,0,0,0,0,0]);
- 
+  
   function handleTimerChange(e) {
     let numArray = []
     const myValue = e.target.value;
     let colonsPresent = 0;
     let charsPresent = [0, 0, 0];
 
-    //Returns the original timer Value if the lengths are too short, too long, or the last value is not s
-    if (myValue.length < 10 | myValue.length > 12 | (myValue.length === 12 & myValue[11] != "s")) {
+    
+    //Tests the regex to see if the input contains the correct pattern of numbers, colons, and letters. Still need further checks for length.
+    if (!regex.test(myValue)) {
+      console.log("Regex Failed");
+      return;
+    }
+
+    //Returns the original timer Value if the lengths are too short or too long
+    if (myValue.length < 10 | myValue.length > 12) {
         return;
     }
     
@@ -68,7 +76,7 @@ function App() {
       //Otherwise it needs to be processed to add in 0s
       else {
         //Determines how long the loop should go for
-        whileLength = 0;
+        let whileLength = 0;
         if (numArray.length > timerValueArray.length) {
           whileLength = timerValueArray.length;
         }
@@ -77,7 +85,7 @@ function App() {
         }
         //Loop to find the index where the user put their number
         let indexFound = -1;
-        currentIndex = 0;
+        let currentIndex = 0;
         while (indexFound === -1 & currentIndex < whileLength) {
           if (timerValueArray[currentIndex] != numArray[currentIndex]) {
             indexFound = currentIndex;
@@ -99,8 +107,8 @@ function App() {
         }
         else {
           if (numArray.length === 5) {
-            myArrayIndex = 0;
-            newArray = [];
+            let myArrayIndex = 0;
+            let newArray = [];
             for (let i = 0; i < 6; i++) {
               if (i === indexFound) {
                 newArray[i] = 0;
@@ -114,12 +122,12 @@ function App() {
             setTimerValue(`${newArray[0]}${newArray[1]}h:${newArray[2]}${newArray[3]}m:${newArray[4]}${newArray[5]}s`);
           }
           else {
-            newArray = [];
-            myArrayIndex = 0;
-            startIndex = 0;
+            let newArray = [];
+            let myArrayIndex = 0;
+            let startIndex = 0;
             while (startIndex <= 7) {
-              newArray[i] = numArray[myArrayIndex]
-              if (i === indexFound) {
+              newArray[startIndex] = numArray[myArrayIndex]
+              if (startIndex === indexFound) {
                 myArrayIndex += 2;
                 startIndex += 1;
               }
@@ -227,7 +235,7 @@ function App() {
       <label>Time (seconds):</label>
       <input type="number" value={timerLength} onChange={handleChange} min="1" max="60"/>
       <br></br>
-      <input type="text" value={timerValue} onChange={handleTimerChange} />
+      <input type="text" value={timerValue} onChange={handleTimerChange}/>
     </>
   )
 }
