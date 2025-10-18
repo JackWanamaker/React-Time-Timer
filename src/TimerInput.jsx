@@ -1,4 +1,5 @@
 const regex = /[0-9]{1,3}h:[0-9]{1,3}m:[0-9]{1,3}s/;
+const newTimerValue = (myArray) => `${myArray[0]}${myArray[1]}h:${myArray[2]}${myArray[3]}m:${myArray[4]}${myArray[5]}s`;
 
 //Returns true if regex doesn't match
 function regexFail(myValue) {
@@ -31,9 +32,9 @@ function getNewNumArray(myValue) {
 }
 
 //Sets the timer values given an array of numbers
-function setTimerValues(timerNumArray) {
+function setTimerValues(timerNumArray, setTimerValue, setOldTimerNumArray) {
     setOldTimerNumArray(timerNumArray);
-    setTimerValue(`${timerNumArray[0]}${timerNumArray[1]}h:${timerNumArray[2]}${timerNumArray[3]}m:${timerNumArray[4]}${timerNumArray[5]}s`);
+    setTimerValue(newTimerValue(timerNumArray));
 }
 
 //Gets the shorter length out of two arrays, and returns -1 if equal.
@@ -51,16 +52,17 @@ function getShorterArrayLength(array1, array2) {
 }
 
 //Gets the index of where the change occurred. This code still needs cleanup
-function getNumChangeIndex(oldTimerNumArray, newTimerNumArray) {
-    let shorterLength = getShorterArrayLength(oldTimerNumArray, newTimerNumArray);
+function getNumChangeIndex(oldTimerNumArray, newTimerNumArray, shorterLength) {
+    //Variable that stores the index where the value in the array is different from the old one
     let indexFound = -1;
-    let shorterLengthLoopIndex = 0;
-    while (indexFound === -1 & shorterLengthLoopIndex < shorterLength) {
-        if (oldTimerNumArray[shorterLengthLoopIndex] != newTimerNumArray[shorterLengthLoopIndex]) {
-            indexFound = shorterLengthLoopIndex;
+    //Iterator for the loop
+    let iterator = 0;
+    while (indexFound === -1 & iterator < shorterLength) {
+        if (oldTimerNumArray[iterator] != newTimerNumArray[iterator]) {
+            indexFound = iterator;
         }
         else {
-            shorterLengthLoopIndex += 1;
+            iterator += 1;
         }
     }
     
@@ -69,6 +71,49 @@ function getNumChangeIndex(oldTimerNumArray, newTimerNumArray) {
         indexFound = shorterLength;
     }
     return indexFound;
+}
+
+function arrayLengthHandler(newTimerNumArray, indexFound) {
+    if (newTimerNumArray.length === 5) {
+        return lengthFiveFunc(newTimerNumArray, indexFound);
+    }
+    else {
+        return lengthSevenFunc(newTimerNumArray, indexFound);
+    }
+}
+
+//Sets new timer value for length 5 array
+function lengthFiveFunc(newTimerNumArray, indexFound) {
+    let myArrayIndex = 0;
+    let processedArray = [];
+    for (let i = 0; i < 6; i++) {
+        if (i === indexFound) {
+            processedArray[i] = 0;
+        }
+        else {
+            processedArray[i] = newTimerNumArray[myArrayIndex];
+            myArrayIndex += 1;
+        }
+    }
+
+    return processedArray;
+}
+
+//Sets new timer value for length 7 array
+function lengthSevenFunc(newTimerNumArray, indexFound) {
+    let processedArray = [];
+    let myArrayIndex = 0;
+    for (let i = 0; i < 6; i++) {
+        processedArray[i] = newTimerNumArray[myArrayIndex]
+        if (i === indexFound) {
+            myArrayIndex += 2;
+        }
+        else {
+            myArrayIndex += 1;
+        }
+    }
+    
+    return processedArray;
 }
 
 const TimerInput = ({timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray}) => {
@@ -89,54 +134,25 @@ const TimerInput = ({timerValue, setTimerValue, oldTimerNumArray, setOldTimerNum
         //If there are 6 numbers in the array, no processing is needed and it can be returned.
         if (newTimerNumArray.length === 6) {
             console.log("Six numbers present");
-            setTimerValues(newTimerNumArray);
+            setTimerValues(newTimerNumArray, setTimerValue, setOldTimerNumArray);
         }
         //Otherwise it needs to be processed to add in 0s
         else {
+            //Gets the shorter length out of the two arrays
+            let shorterLength = getShorterArrayLength(oldTimerNumArray, newTimerNumArray);
             //Gets the index of where a change occurred
-            let indexFound = getNumChangeIndex(oldTimerNumArray, newTimerNumArray);
+            let indexFound = getNumChangeIndex(oldTimerNumArray, newTimerNumArray, shorterLength);
             
             //Returns the original number if there is a 7th number at the end. That is invalid.
             if (indexFound === 6) {
                 return;
             }
             else {
-                if (newTimerNumArray.length === 5) {
-                let myArrayIndex = 0;
-                let newArray = [];
-                for (let i = 0; i < 6; i++) {
-                    if (i === indexFound) {
-                    newArray[i] = 0;
-                    }
-                    else {
-                    newArray[i] = newTimerNumArray[myArrayIndex];
-                    myArrayIndex += 1;
-                    }
-                }
-                setOldTimerNumArray(newArray);
-                setTimerValue(`${newArray[0]}${newArray[1]}h:${newArray[2]}${newArray[3]}m:${newArray[4]}${newArray[5]}s`);
-                }
-                else {
-                let newArray = [];
-                let myArrayIndex = 0;
-                let startIndex = 0;
-                while (startIndex <= 7) {
-                    newArray[startIndex] = newTimerNumArray[myArrayIndex]
-                    if (startIndex === indexFound) {
-                    myArrayIndex += 2;
-                    startIndex += 1;
-                    }
-                    else {
-                    myArrayIndex += 1;
-                    startIndex += 1;
-                    }
-                }
-                setOldTimerNumArray(newArray);
-                setTimerValue(`${newArray[0]}${newArray[1]}h:${newArray[2]}${newArray[3]}m:${newArray[4]}${newArray[5]}s`);
-        }
-      }
-    } 
-  }
+                let processedArray = arrayLengthHandler(newTimerNumArray, indexFound);
+                setTimerValues(processedArray, setTimerValue, setOldTimerNumArray);
+            }
+        } 
+    }
 
     return (
         <input type="text" value={timerValue} onChange={handleTimerChange}/>
