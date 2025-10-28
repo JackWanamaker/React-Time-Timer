@@ -116,24 +116,21 @@ function lengthSevenFunc(newTimerNumArray, indexFound) {
     return processedArray;
 }
 
-function advanceCaretPosition(e, caretPosition, newCaretPosition, ref) {
-    console.log("New Caret Position: " + newCaretPosition);
-    console.log("Old Caret Position: " + caretPosition.current);
+function advanceCaretPosition(e, setCaretPosition, newCaretPosition, ref) {
     if (newCaretPosition == 9) {
         ref.current.blur();
-        caretPosition.current = 0;
+        setCaretPosition(0);
     }
     else if (newCaretPosition == 1 | newCaretPosition == 5) {
-        caretPosition.current = newCaretPosition + 3;
+        setCaretPosition(newCaretPosition + 3);
     }
     else {
-        caretPosition.current = newCaretPosition + 1;
+        setCaretPosition(newCaretPosition + 1);
     }
-    console.log("Updated Caret Position: " + caretPosition.current);
 }
 
 
-const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray, caretPosition}) => {
+const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray, setCaretPosition}) => {
     
     function handleTimerChange(e) {
         //Current string value in the text box
@@ -178,7 +175,7 @@ const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTim
             }
         } 
 
-        advanceCaretPosition(e, caretPosition, newCaretPosition, ref);
+        advanceCaretPosition(e, setCaretPosition, newCaretPosition, ref);
     }
 
     return (

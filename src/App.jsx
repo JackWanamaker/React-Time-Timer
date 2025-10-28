@@ -13,7 +13,7 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [timerValue, setTimerValue] = useState("00h:00m:00s");
   const [oldTimerNumArray, setOldTimerNumArray] = useState([0,0,0,0,0,0]);
-  const caretPosition = useRef(0);
+  const [caretPosition, setCaretPosition] = useState(0);
   const timerRef = useRef(null);
   
   function handleChange(e) {
@@ -89,9 +89,13 @@ function App() {
   }, [isRunning, timeLeft]);
 
   useEffect(() => {
-        console.log("Caret Position: " + caretPosition.current);
-        timerRef.current.selectionEnd = caretPosition.current;
+        console.log("Caret Position: " + caretPosition);
+        timerRef.current.selectionEnd = caretPosition;
     }, [timerValue]);
+
+  useEffect(() => {
+        
+  }, [timerRef.current.selectionStart, timerRef.current.selectionEnd]);
 
   return (
     <>
@@ -112,7 +116,7 @@ function App() {
       <label>Time (seconds):</label>
       <input type="number" value={timerLength} onChange={handleChange} min="1" max="60"/>
       <br></br>
-      <TimerInput ref={timerRef} timerValue={timerValue} setTimerValue={setTimerValue} oldTimerNumArray={oldTimerNumArray} setOldTimerNumArray={setOldTimerNumArray} caretPosition={caretPosition}/>
+      <TimerInput ref={timerRef} timerValue={timerValue} setTimerValue={setTimerValue} oldTimerNumArray={oldTimerNumArray} setOldTimerNumArray={setOldTimerNumArray} setCaretPosition={setCaretPosition}/>
     </>
   )
 }
