@@ -116,11 +116,36 @@ function lengthSevenFunc(newTimerNumArray, indexFound) {
     return processedArray;
 }
 
-const TimerInput = ({timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray}) => {
+function advanceCaretPosition(e, caretPosition, newCaretPosition, ref) {
+    console.log("New Caret Position: " + newCaretPosition);
+    console.log("Old Caret Position: " + caretPosition.current);
+    if (newCaretPosition == 9) {
+        ref.current.blur();
+        caretPosition.current = 0;
+    }
+    else if (newCaretPosition == 1 | newCaretPosition == 5) {
+        caretPosition.current = newCaretPosition + 3;
+    }
+    else {
+        caretPosition.current = newCaretPosition + 1;
+    }
+    console.log("Updated Caret Position: " + caretPosition.current);
+}
+
+
+const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray, caretPosition}) => {
     
     function handleTimerChange(e) {
         //Current string value in the text box
         const myValue = e.target.value;
+        //Gets the current caret position
+        const newCaretPosition = e.target.selectionEnd - 1;
+        
+        //If the caret is at the end we blur the input
+        if (newCaretPosition == 10) {
+           ref.current.blur();
+           return;
+        }
         
         //Checks for valid regex and length and returns original value if invalid.
         if (regexFail(myValue) | lengthFail(myValue)) {
@@ -152,10 +177,12 @@ const TimerInput = ({timerValue, setTimerValue, oldTimerNumArray, setOldTimerNum
                 setTimerValues(processedArray, setTimerValue, setOldTimerNumArray);
             }
         } 
+
+        advanceCaretPosition(e, caretPosition, newCaretPosition, ref);
     }
 
     return (
-        <input type="text" value={timerValue} onChange={handleTimerChange}/>
+        <input ref={ref} type="text" value={timerValue} onChange={handleTimerChange}/>
     )
 }
 
