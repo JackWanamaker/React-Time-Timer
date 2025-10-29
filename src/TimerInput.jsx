@@ -1,3 +1,5 @@
+import './TimerInput.css'
+
 const regex = /[0-9]{1,3}h:[0-9]{1,3}m:[0-9]{1,3}s/;
 const newTimerValue = (myArray) => `${myArray[0]}${myArray[1]}h:${myArray[2]}${myArray[3]}m:${myArray[4]}${myArray[5]}s`;
 

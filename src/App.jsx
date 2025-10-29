@@ -93,9 +93,7 @@ function App() {
         timerRef.current.selectionEnd = caretPosition;
     }, [timerValue]);
 
-  useEffect(() => {
-        
-  }, [timerRef.current.selectionStart, timerRef.current.selectionEnd]);
+  
 
   return (
     <>
