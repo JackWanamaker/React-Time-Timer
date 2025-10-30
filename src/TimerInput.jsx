@@ -1,6 +1,6 @@
 import './TimerInput.css'
 
-const regex = /[0-9]{1,3}h:[0-9]{1,3}m:[0-9]{1,3}s/;
+const regex = /[0-9]{1,3}h{0,1}[0-9]{0,1}:{0,1}[0-9]{1,3}m{0,1}[0-9]{0,1}:{0,1}[0-9]{1,3}s{0,1}[0-9]{0,1}/;
 const newTimerValue = (myArray) => `${myArray[0]}${myArray[1]}h:${myArray[2]}${myArray[3]}m:${myArray[4]}${myArray[5]}s`;
 
 //Returns true if regex doesn't match
@@ -21,26 +21,38 @@ function lengthFail(myValue) {
 }
 
 //Adds all numbers present to an array and returns the array
-function getNewNumArray(myValue) {
+function getEntryInformation(myValue) {
     let newTimerNumArray = [];
+    let colonCount = 0;
+    let letterCount = 0;
     for (let i = 0; i < myValue.length; i++) {
         let tempVal = parseInt(myValue[i]);
         if (!isNaN(tempVal)) {
             newTimerNumArray[newTimerNumArray.length] = tempVal;
         }
+        else {
+            if (myValue[i] === ":") {
+                colonCount += 1;
+            }
+            else {
+                letterCount += 1;
+            }
+        }
     }
-    console.log(newTimerNumArray)
-    return newTimerNumArray;
+    return [newTimerNumArray, colonCount, letterCount];
 }
 
 //Sets the timer values given an array of numbers
 function setTimerValues(timerNumArray, setTimerValue, setOldTimerNumArray) {
+    //console.log("Setting Timer Values");
     setOldTimerNumArray(timerNumArray);
     setTimerValue(newTimerValue(timerNumArray));
 }
 
 //Gets the shorter length out of two arrays, and returns -1 if equal.
 function getShorterArrayLength(array1, array2) {
+    //console.log("Array1: " + array1);
+    //console.log("Array2: " + array2);
     if (array1.length > array2.length) {
         return array2.length;
     }
@@ -75,6 +87,16 @@ function getNumChangeIndex(oldTimerNumArray, newTimerNumArray, shorterLength) {
     return indexFound;
 }
 
+function getNumChangeIndex2(newTimerNumArray, caretPosition) {
+    //console.log("Caret Position: " + caretPosition);
+    if (newTimerNumArray.length == 5) {
+        return ((caretPosition % 2) + ((caretPosition - (caretPosition % 2)) * 0.5));
+    }
+    else {
+        return (((caretPosition + (caretPosition % 2)) * 0.5) - (caretPosition % 2));
+    }
+}
+
 //Handler function that calls an additional function based on array length. Returns processed array and length of original array.
 function arrayLengthHandler(newTimerNumArray, indexFound) {
     if (newTimerNumArray.length === 5) {
@@ -87,6 +109,7 @@ function arrayLengthHandler(newTimerNumArray, indexFound) {
 
 //Sets new timer value for length 5 array
 function lengthFiveFunc(newTimerNumArray, indexFound) {
+    //console.log("Length Five Function Called");
     let myArrayIndex = 0;
     let processedArray = [];
     for (let i = 0; i < 6; i++) {
@@ -121,12 +144,12 @@ function lengthSevenFunc(newTimerNumArray, indexFound) {
 
 //Moves the caret forward, skipping over non number characters
 function moveCaretForward(setStartCaretPosition, newCaretPosition, ref) {
+    //console.log("Moved Caret Forward");
     if (newCaretPosition == 11) {
         ref.current.blur();
         setStartCaretPosition(0);
     }
     else if (newCaretPosition == 3 | newCaretPosition == 7) {
-        console.log("I'm here");
         setStartCaretPosition(newCaretPosition + 2);
     }
     else {
@@ -136,7 +159,9 @@ function moveCaretForward(setStartCaretPosition, newCaretPosition, ref) {
 
 //Moves the caret backward
 function moveCaretBackward(setStartCaretPosition, newCaretPosition) {
-    if (newCaretPosition == 4 | newCaretPosition == 8) {
+    //console.log("Moved Caret Backward");
+    //console.log("New Caret Position: " + newCaretPosition);
+    if (newCaretPosition == 4 | newCaretPosition == 8 | newCaretPosition == 3 | newCaretPosition == 7) {
         setStartCaretPosition(newCaretPosition - 2);
     }
     else {
@@ -150,49 +175,60 @@ const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTim
     function handleTimerChange(e) {
         //Current string value in the text box
         const myValue = e.target.value;
+        console.log(myValue);
         //Gets the current caret position
-        const newCaretPosition = e.target.selectionEnd;
-        console.log("Caret Position: " + newCaretPosition);
+        let newCaretPosition = e.target.selectionStart;
         
         //Checks for valid regex and length and returns original value if invalid.
         if (regexFail(myValue) | lengthFail(myValue)) {
+            console.log("Regex fail")
+            newCaretPosition = startCaretPosition;
             return;
         }
         
-        //Puts the numbers in the string in order in an arrayS
-        let newTimerNumArray = getNewNumArray(myValue);
-        console.log("Finished getting num Loop");
+        //Puts the numbers in the string in order in an array
+        let tempReturn = getEntryInformation(myValue);
+        let newTimerNumArray = tempReturn[0];
 
-        //If there are 6 numbers in the array, no processing is needed and it can be returned.
-        if (newTimerNumArray.length === 6) {
-            console.log("Six numbers present");
-            setTimerValues(newTimerNumArray, setTimerValue, setOldTimerNumArray);
-        }
-        //Otherwise it needs to be processed to add in 0s
-        else {
-            //Gets the shorter length out of the two arrays
-            let shorterLength = getShorterArrayLength(oldTimerNumArray, newTimerNumArray);
-            //Gets the index of where a change occurred
-            let indexFound = getNumChangeIndex(oldTimerNumArray, newTimerNumArray, shorterLength);
-            
-            //Returns the original number if there is a 7th number at the end. That is invalid.
-            if (indexFound === 6) {
-                return;
+        if (tempReturn[1] < 2 | tempReturn[2] < 3) {
+            if (newCaretPosition % 2 == 1) {
+                newTimerNumArray.splice(((newCaretPosition + 1) * 0.5) - 1, 1);
+                newCaretPosition -= 2;
             }
             else {
-                let processedArray = arrayLengthHandler(newTimerNumArray, indexFound);
-                setTimerValues(processedArray[0], setTimerValue, setOldTimerNumArray);
-                if (processedArray[1] === 5) {
-                    moveCaretBackward(setStartCaretPosition, newCaretPosition);
-                }
-                else {
-                    moveCaretForward(setStartCaretPosition, newCaretPosition, ref);
-                }
+                newTimerNumArray.splice(((newCaretPosition*0.5) + 1) - 1, 1);
+                newCaretPosition -= 1;
+            }
+        }
 
-                //If the caret is at the end we blur the input
-                if (newCaretPosition == 10) {
-                    ref.current.blur();
-                }
+        else if (tempReturn[1] > 2 | tempReturn[2] > 3) {
+            return;
+        }
+
+        //Otherwise it needs to be processed to add in 0s
+        //Gets the shorter length out of the two arrays
+        //let shorterLength = getShorterArrayLength(oldTimerNumArray, newTimerNumArray);
+        //Gets the index of where a change occurred
+        let indexFound = getNumChangeIndex2(newTimerNumArray, newCaretPosition);
+        //console.log("Index Found: " + indexFound);
+        
+        //Returns the original number if there is a 7th number at the end. That is invalid.
+        if (indexFound === 6) {
+            return;
+        }
+        else {
+            let processedArray = arrayLengthHandler(newTimerNumArray, indexFound);
+            setTimerValues(processedArray[0], setTimerValue, setOldTimerNumArray);
+            if (processedArray[1] === 5) {
+                moveCaretBackward(setStartCaretPosition, newCaretPosition);
+            }
+            else {
+                moveCaretForward(setStartCaretPosition, newCaretPosition, ref);
+            }
+
+            //If the caret is at the end we blur the input
+            if (newCaretPosition == 10) {
+                ref.current.blur();
             }
         } 
     }
@@ -219,11 +255,7 @@ const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTim
         //console.log("Selection End: " + e.target.selectionEnd);
         //console.log("Start Caret Position: " + startCaretPosition);
         //console.log("End Caret Position: " + endCaretPosition);
-        if (e.target.selectionStart == 3 | e.target.selectionStart == 7) {
-            e.target.selectionStart = startCaretPosition;
-            e.target.selectionEnd = startCaretPosition;
-        }
-        else if (e.target.selectionStart != e.target.selectionEnd) {
+        if (e.target.selectionStart != e.target.selectionEnd) {
             if (e.target.selectionStart == startCaretPosition) {
                 e.target.selectionEnd = startCaretPosition;
             }
