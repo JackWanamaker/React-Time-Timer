@@ -75,12 +75,13 @@ function getNumChangeIndex(oldTimerNumArray, newTimerNumArray, shorterLength) {
     return indexFound;
 }
 
+//Handler function that calls an additional function based on array length. Returns processed array and length of original array.
 function arrayLengthHandler(newTimerNumArray, indexFound) {
     if (newTimerNumArray.length === 5) {
-        return lengthFiveFunc(newTimerNumArray, indexFound);
+        return [lengthFiveFunc(newTimerNumArray, indexFound), 5];
     }
     else {
-        return lengthSevenFunc(newTimerNumArray, indexFound);
+        return [lengthSevenFunc(newTimerNumArray, indexFound), 7];
     }
 }
 
@@ -118,33 +119,40 @@ function lengthSevenFunc(newTimerNumArray, indexFound) {
     return processedArray;
 }
 
-function advanceCaretPosition(e, setCaretPosition, newCaretPosition, ref) {
-    if (newCaretPosition == 9) {
+//Moves the caret forward, skipping over non number characters
+function moveCaretForward(setStartCaretPosition, newCaretPosition, ref) {
+    if (newCaretPosition == 11) {
         ref.current.blur();
-        setCaretPosition(0);
+        setStartCaretPosition(0);
     }
-    else if (newCaretPosition == 1 | newCaretPosition == 5) {
-        setCaretPosition(newCaretPosition + 3);
+    else if (newCaretPosition == 3 | newCaretPosition == 7) {
+        console.log("I'm here");
+        setStartCaretPosition(newCaretPosition + 2);
     }
     else {
-        setCaretPosition(newCaretPosition + 1);
+        setStartCaretPosition(newCaretPosition);
+    }
+}
+
+//Moves the caret backward
+function moveCaretBackward(setStartCaretPosition, newCaretPosition) {
+    if (newCaretPosition == 4 | newCaretPosition == 8) {
+        setStartCaretPosition(newCaretPosition - 2);
+    }
+    else {
+        setStartCaretPosition(newCaretPosition);
     }
 }
 
 
-const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray, setCaretPosition}) => {
+const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray, startCaretPosition, setStartCaretPosition, endCaretPosition, setEndCaretPosition}) => {
     
     function handleTimerChange(e) {
         //Current string value in the text box
         const myValue = e.target.value;
         //Gets the current caret position
-        const newCaretPosition = e.target.selectionEnd - 1;
-        
-        //If the caret is at the end we blur the input
-        if (newCaretPosition == 10) {
-           ref.current.blur();
-           return;
-        }
+        const newCaretPosition = e.target.selectionEnd;
+        console.log("Caret Position: " + newCaretPosition);
         
         //Checks for valid regex and length and returns original value if invalid.
         if (regexFail(myValue) | lengthFail(myValue)) {
@@ -173,15 +181,64 @@ const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTim
             }
             else {
                 let processedArray = arrayLengthHandler(newTimerNumArray, indexFound);
-                setTimerValues(processedArray, setTimerValue, setOldTimerNumArray);
+                setTimerValues(processedArray[0], setTimerValue, setOldTimerNumArray);
+                if (processedArray[1] === 5) {
+                    moveCaretBackward(setStartCaretPosition, newCaretPosition);
+                }
+                else {
+                    moveCaretForward(setStartCaretPosition, newCaretPosition, ref);
+                }
+
+                //If the caret is at the end we blur the input
+                if (newCaretPosition == 10) {
+                    ref.current.blur();
+                }
             }
         } 
+    }
 
-        advanceCaretPosition(e, setCaretPosition, newCaretPosition, ref);
+    function handleSelect(e) {
+        //console.log("Handle Select");
+        if (e.target.selectionStart == e.target.selectionEnd) {
+            //console.log("No Selection Made");
+            return;
+        }
+        //console.log("Current Selection");
+        //console.log("Start Caret Position: " + e.target.selectionStart);
+        //console.log("End Caret Position: " + e.target.selectionEnd);
+        //console.log("Stored Values");
+        //console.log("Start Caret Position: " + startCaretPosition);
+        //console.log("End Caret Position: " + endCaretPosition);
+        e.target.selectionStart = startCaretPosition;
+        e.target.selectionEnd = startCaretPosition;
+    }
+
+    function handleMouseKey(e) {
+        //console.log("Handle Mouse Key");
+        //console.log("Selection Start: " + e.target.selectionStart);
+        //console.log("Selection End: " + e.target.selectionEnd);
+        //console.log("Start Caret Position: " + startCaretPosition);
+        //console.log("End Caret Position: " + endCaretPosition);
+        if (e.target.selectionStart == 3 | e.target.selectionStart == 7) {
+            e.target.selectionStart = startCaretPosition;
+            e.target.selectionEnd = startCaretPosition;
+        }
+        else if (e.target.selectionStart != e.target.selectionEnd) {
+            if (e.target.selectionStart == startCaretPosition) {
+                e.target.selectionEnd = startCaretPosition;
+            }
+            else {
+                e.target.selectionStart = startCaretPosition;
+            }
+        }
+        else {
+            setStartCaretPosition(e.target.selectionStart);
+            setEndCaretPosition(e.target.selectionStart);
+        }
     }
 
     return (
-        <input ref={ref} type="text" value={timerValue} onChange={handleTimerChange}/>
+        <input ref={ref} type="text" value={timerValue} onChange={handleTimerChange} onSelect={handleSelect} onMouseUp={handleMouseKey} onKeyUp={handleMouseKey}/>
     )
 }
 
