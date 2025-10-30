@@ -92,7 +92,7 @@ function App() {
   useEffect(() => {
         console.log("Start Caret Position: " + startCaretPosition);
         timerRef.current.selectionEnd = startCaretPosition;
-    }, [timerValue]);
+    }, [startCaretPosition]);
 
   return (
     <>

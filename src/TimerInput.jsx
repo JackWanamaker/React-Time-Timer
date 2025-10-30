@@ -88,7 +88,7 @@ function getNumChangeIndex(oldTimerNumArray, newTimerNumArray, shorterLength) {
 }
 
 function getNumChangeIndex2(newTimerNumArray, caretPosition) {
-    //console.log("Caret Position: " + caretPosition);
+    console.log("Caret Position: " + caretPosition);
     if (newTimerNumArray.length == 5) {
         return ((caretPosition % 2) + ((caretPosition - (caretPosition % 2)) * 0.5));
     }
@@ -127,9 +127,13 @@ function lengthFiveFunc(newTimerNumArray, indexFound) {
 
 //Sets new timer value for length 7 array
 function lengthSevenFunc(newTimerNumArray, indexFound) {
+    console.log("Index Found: " + indexFound);
+    console.log("newTimerNumArray: " + newTimerNumArray);
     let processedArray = [];
     let myArrayIndex = 0;
     for (let i = 0; i < 6; i++) {
+        console.log("&");
+        console.log("Current newTimerNumArray Value" + newTimerNumArray[myArrayIndex]);
         processedArray[i] = newTimerNumArray[myArrayIndex]
         if (i === indexFound) {
             myArrayIndex += 2;
@@ -143,13 +147,10 @@ function lengthSevenFunc(newTimerNumArray, indexFound) {
 }
 
 //Moves the caret forward, skipping over non number characters
-function moveCaretForward(setStartCaretPosition, newCaretPosition, ref) {
+function moveCaretForward(setStartCaretPosition, newCaretPosition) {
     //console.log("Moved Caret Forward");
-    if (newCaretPosition == 11) {
-        ref.current.blur();
-        setStartCaretPosition(0);
-    }
-    else if (newCaretPosition == 3 | newCaretPosition == 7) {
+    console.log("New Caret Position: " + newCaretPosition);
+    if (newCaretPosition == 3 | newCaretPosition == 7) {
         setStartCaretPosition(newCaretPosition + 2);
     }
     else {
@@ -190,6 +191,7 @@ const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTim
         let tempReturn = getEntryInformation(myValue);
         let newTimerNumArray = tempReturn[0];
 
+        //Runs if there are too few or too many colons/letters
         if (tempReturn[1] < 2 | tempReturn[2] < 3) {
             if (newCaretPosition % 2 == 1) {
                 newTimerNumArray.splice(((newCaretPosition + 1) * 0.5) - 1, 1);
@@ -201,6 +203,7 @@ const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTim
             }
         }
 
+        //Runs if there are too many colons/letters
         else if (tempReturn[1] > 2 | tempReturn[2] > 3) {
             return;
         }
@@ -218,17 +221,13 @@ const TimerInput = ({ref, timerValue, setTimerValue, oldTimerNumArray, setOldTim
         }
         else {
             let processedArray = arrayLengthHandler(newTimerNumArray, indexFound);
+            console.log("Processed Array: " + processedArray[0]);
             setTimerValues(processedArray[0], setTimerValue, setOldTimerNumArray);
             if (processedArray[1] === 5) {
                 moveCaretBackward(setStartCaretPosition, newCaretPosition);
             }
             else {
                 moveCaretForward(setStartCaretPosition, newCaretPosition, ref);
-            }
-
-            //If the caret is at the end we blur the input
-            if (newCaretPosition == 10) {
-                ref.current.blur();
             }
         } 
     }
