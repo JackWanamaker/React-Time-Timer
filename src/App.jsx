@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Arc from './Arc'
 import TimerInput from './TimerInput'
+import TimerInput2 from './TimerInput2'
 
 function App() {
   const [arcAngle, setArcAngle] = useState(359.99);
@@ -16,6 +17,10 @@ function App() {
   const [startCaretPosition, setStartCaretPosition] = useState(0);
   const [endCaretPosition, setEndCaretPosition] = useState(0);
   const timerRef = useRef(null);
+
+  const [timerValue2, setTimerValue2] = useState(["00", "00", "00"]);
+  const [startCaret, setStartCaret] = useState([0, 1]);
+  const [endCaret, setEndCaret] = useState([0, 1]);
   
   function handleChange(e) {
     setTimerLength(e.target.value);
@@ -114,6 +119,7 @@ function App() {
       <input type="number" value={timerLength} onChange={handleChange} min="1" max="60"/>
       <br></br>
       <TimerInput ref={timerRef} timerValue={timerValue} setTimerValue={setTimerValue} oldTimerNumArray={oldTimerNumArray} setOldTimerNumArray={setOldTimerNumArray} startCaretPosition={startCaretPosition} setStartCaretPosition={setStartCaretPosition} endCaretPosition={endCaretPosition} setEndCaretPosition={setEndCaretPosition}/>
+      <TimerInput2 timerValue={timerValue2} setTimerValue={setTimerValue2} startCaretPosition={startCaret} setStartCaretPosition={setStartCaret} endCaretPosition={endCaret} setEndCaretPosition={setEndCaret}/>
     </>
   )
 }
