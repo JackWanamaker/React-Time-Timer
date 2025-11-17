@@ -3,6 +3,7 @@ import './App.css'
 import Arc from './Arc'
 import TimerInput from './TimerInput'
 import TimerInput2 from './TimerInput2'
+import { use } from 'react'
 
 function App() {
   const [arcAngle, setArcAngle] = useState(359.99);
@@ -18,9 +19,13 @@ function App() {
   const [endCaretPosition, setEndCaretPosition] = useState(0);
   const timerRef = useRef(null);
 
-  const [timerValue2, setTimerValue2] = useState(["00", "00", "00"]);
+  const [timerValue2, setTimerValue2] = useState(["12", "34", "56"]);
   const [startCaret, setStartCaret] = useState([0, 1]);
-  const [endCaret, setEndCaret] = useState([0, 1]);
+  const timerRef0 = useRef(null);
+  const timerRef1 = useRef(null);
+  const timerRef2 = useRef(null);
+  const timerRefs = [timerRef0, timerRef1, timerRef2];
+  const canBackSpace = useRef(true);
   
   function handleChange(e) {
     setTimerLength(e.target.value);
@@ -95,9 +100,12 @@ function App() {
   }, [isRunning, timeLeft]);
 
   useEffect(() => {
-        console.log("Start Caret Position: " + startCaretPosition);
+        console.log("Current Box: " + startCaret[0]);
+        console.log("Current Caret: " + startCaret[1]);
+        console.log(timerValue2);
         timerRef.current.selectionEnd = startCaretPosition;
-    }, [startCaretPosition]);
+        timerRefs[startCaret[0]].current.selectionStart = startCaretPosition[1];
+    }, [timerValue2]);
 
   return (
     <>
@@ -119,7 +127,7 @@ function App() {
       <input type="number" value={timerLength} onChange={handleChange} min="1" max="60"/>
       <br></br>
       <TimerInput ref={timerRef} timerValue={timerValue} setTimerValue={setTimerValue} oldTimerNumArray={oldTimerNumArray} setOldTimerNumArray={setOldTimerNumArray} startCaretPosition={startCaretPosition} setStartCaretPosition={setStartCaretPosition} endCaretPosition={endCaretPosition} setEndCaretPosition={setEndCaretPosition}/>
-      <TimerInput2 timerValue={timerValue2} setTimerValue={setTimerValue2} startCaretPosition={startCaret} setStartCaretPosition={setStartCaret} endCaretPosition={endCaret} setEndCaretPosition={setEndCaret}/>
+      <TimerInput2 refs={timerRefs} ref0={timerRef0} ref1={timerRef1} ref2={timerRef2} timerValue={timerValue2} setTimerValue={setTimerValue2} startCaretPosition={startCaret} setStartCaretPosition={setStartCaret} canBackSpace={canBackSpace}/>
     </>
   )
 }
