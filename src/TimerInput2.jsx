@@ -37,6 +37,7 @@ const TimerInput2 = ({refs, ref0, ref1, ref2, timerValue, setTimerValue, oldTime
                     currentBox == "1" ? e.target.value[0] + e.target.value[2] : timerValue[1],
                     currentBox == "2" ? e.target.value[0] + e.target.value[2] : timerValue[2]
                 ]);
+                setStartCaretPosition([parseInt(currentBox),1]);
             }
             else if (e.target.selectionStart == 2) {
                 setTimerValue([
@@ -44,6 +45,7 @@ const TimerInput2 = ({refs, ref0, ref1, ref2, timerValue, setTimerValue, oldTime
                     currentBox == "1" ? e.target.value[0] + e.target.value[1] : timerValue[1],
                     currentBox == "2" ? e.target.value[0] + e.target.value[1] : timerValue[2]
                 ]);
+                setStartCaretPosition([parseInt(currentBox),2]);
             }
             else {
                 setTimerValue([
@@ -51,6 +53,13 @@ const TimerInput2 = ({refs, ref0, ref1, ref2, timerValue, setTimerValue, oldTime
                     currentBox == "0" ? e.target.value[2] + timerValue[1][1] : timerValue[1],
                     currentBox == "1" ? e.target.value[2] + timerValue[2][1] : timerValue[2]
                 ]);
+                if (parseInt(currentBox) == 0 | parseInt(currentBox) == 1) {
+                    console.log("I'm here");
+                    setStartCaretPosition([parseInt(currentBox) + 1, 1]);
+                }
+                else {
+                    setStartCaretPosition([2,2]);
+                }
             }
         }
 
@@ -74,7 +83,6 @@ const TimerInput2 = ({refs, ref0, ref1, ref2, timerValue, setTimerValue, oldTime
     }
     
     function handleKeyboardKeys(e) {
-        console.log(refs);
         if (e.key === "ArrowLeft") {
             if ((e.target.id == "1" || e.target.id == "2") && e.target.selectionStart == 0 && startCaretPosition[1] == 0) {
                 if (e.target.id == "1") {
@@ -93,15 +101,20 @@ const TimerInput2 = ({refs, ref0, ref1, ref2, timerValue, setTimerValue, oldTime
         else if (e.key === "ArrowRight") {
             if ((e.target.id == "0" || e.target.id == "1") && e.target.selectionStart == 2 && startCaretPosition[1] == 2) {
                 if (e.target.id == "0") {
+                    console.log("Option One")
                     refs[1].current.focus();
+                    refs[1].current.selectionStart = 0;
                     setStartCaretPosition([1, 0]);
                 }
                 else if (e.target.id == "1") {
+                    console.log("Option Two")
                     refs[2].current.focus();
+                    refs[2].current.selectionStart = 0;
                     setStartCaretPosition([2, 0]);
                 }
             }
             else {
+                console.log("Option Three");
                 setStartCaretPosition([parseInt(e.target.id), e.target.selectionStart]);
             }
         }

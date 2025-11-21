@@ -17,6 +17,7 @@ function polarToCartesian(cx, cy, r, angleDeg) {
     //console.log(largeArcFlag)
     const returnValue = `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y} L ${start.x} ${start.y+r} Z`
     //console.log(returnValue)
+
     return returnValue;
   }
 
