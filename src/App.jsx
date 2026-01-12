@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Arc from './Arc'
-import TimerInput from './TimerInput'
 import TimerInput2 from './TimerInput2'
-import { use } from 'react'
 
 function App() {
   const [arcAngle, setArcAngle] = useState(359.99);
@@ -15,7 +13,7 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
 
   const [timerValue2, setTimerValue2] = useState(["01", "00", "00"]);
-  const [startCaret, setStartCaret] = useState([0, 1]);
+  const [caret, setCaret] = useState([0, 1]);
   const timerRef0 = useRef(null);
   const timerRef1 = useRef(null);
   const timerRef2 = useRef(null);
@@ -95,11 +93,11 @@ function App() {
   }, [isRunning, timeLeft]);
 
   useEffect(() => {
-        console.log("Current Box: " + startCaret[0]);
-        console.log("Current Caret: " + startCaret[1]);
+        console.log("Current Box: " + caret[0]);
+        console.log("Current Caret: " + caret[1]);
         console.log(timerValue2);
-        timerRefs[startCaret[0]].current.focus();
-        timerRefs[startCaret[0]].current.selectionStart = startCaret[1];
+        timerRefs[caret[0]].current.focus();
+        timerRefs[caret[0]].current.selectionStart = caret[1];
         setTimerLength((parseInt(timerValue2[0])*3600) + (parseInt(timerValue2[1])*60) + (parseInt(timerValue2[2])));
     }, [timerValue2]);
 
@@ -119,7 +117,7 @@ function App() {
       <button onClick={stopTimer}>Stop Timer</button>
       <br></br>
       <br></br>
-      <TimerInput2 refs={timerRefs} ref0={timerRef0} ref1={timerRef1} ref2={timerRef2} timerValue={timerValue2} setTimerValue={setTimerValue2} startCaretPosition={startCaret} setStartCaretPosition={setStartCaret} canBackSpace={canBackSpace}/>
+      <TimerInput2 refs={timerRefs} ref0={timerRef0} ref1={timerRef1} ref2={timerRef2} timerValue={timerValue2} setTimerValue={setTimerValue2} caret={caret} setCaret={setCaret} canBackSpace={canBackSpace}/>
     </>
   )
 }

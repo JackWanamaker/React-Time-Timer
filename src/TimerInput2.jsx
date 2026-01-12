@@ -1,14 +1,21 @@
 import './TimerInput.css'
 
-const TimerInput2 = ({refs, ref0, ref1, ref2, timerValue, setTimerValue, oldTimerNumArray, setOldTimerNumArray, startCaretPosition, setStartCaretPosition, canBackSpace}) => {
+const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackSpace}) => {
 
     function handleChange(e) {
         console.log("Handle Change");
         console.log(e.target.value);
         const currentBox = e.target.id;
+        
+        //DENIALS
+        
+        //Denial of 2 character input (user selected a number and replaced it)
         if (e.target.value.length != 1 & e.target.value.length != 3) {
             return;
         }
+        //ACCEPTANCES
+
+        //User removed a number
         else if (e.target.value.length == 1) {
             if (e.target.selectionStart == 0) {
                 setTimerValue([
@@ -28,9 +35,8 @@ const TimerInput2 = ({refs, ref0, ref1, ref2, timerValue, setTimerValue, oldTime
             setStartCaretPosition([parseInt(currentBox), e.target.selectionStart]);
             canBackSpace.current = false;
         }
+        //User added a number
         else {
-            console.log("Three Characters Inputted");
-            console.log("Selection Start: " + e.target.selectionStart);
             if (e.target.selectionStart == 1) {
                 setTimerValue([
                     currentBox == "0" ? e.target.value[0] + e.target.value[2] : timerValue[0],
