@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Arc from './Arc'
 import TimerInput2 from './TimerInput2'
+import StartPause from './StartPause'
 
 function App() {
   const [arcAngle, setArcAngle] = useState(359.99);
@@ -12,7 +13,7 @@ function App() {
   const [cachedTime, setCachedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
-  const [timerValue2, setTimerValue2] = useState(["01", "00", "00"]);
+  const [timerValue2, setTimerValue2] = useState(["00", "01", "00"]);
   const timerRef0 = useRef(null);
   const timerRef1 = useRef(null);
   const timerRef2 = useRef(null);
@@ -60,6 +61,20 @@ function App() {
     setArcAngle(359.99);
     setCachedTime(0);
     console.log("Stopped");
+  }
+
+  function handleStartPause() {
+    if (!isRunning) {
+      if (cachedTime == 0) {
+        startTimer();
+      }
+      else {
+        resumeTimer();
+      }
+    }
+    else {
+      pauseTimer();
+    }
   }
 
   useEffect(() => {
@@ -113,11 +128,12 @@ function App() {
           <path d="M5 16L7 16L15 8L7 -2.7818e-08L5 0L5 16Z" fill="#000000"/>
         </svg>
       </button>
-      <button onClick={pauseTimer}>Pause Timer </button>
+      <button onClick={pauseTimer}>Pause Timer</button>
       <button onClick={stopTimer}>Stop Timer</button>
       <br></br>
       <br></br>
       <TimerInput2 refs={timerRefs} ref0={timerRef0} ref1={timerRef1} ref2={timerRef2} timerValue={timerValue2} setTimerValue={setTimerValue2} caret={caret} setCaret={setCaret} canBackSpace={canBackSpace}/>
+      <StartPause isRunning={isRunning} handleStartPause = {handleStartPause}/>
     </>
   )
 }
