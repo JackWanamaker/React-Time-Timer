@@ -13,11 +13,11 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
 
   const [timerValue2, setTimerValue2] = useState(["01", "00", "00"]);
-  const [caret, setCaret] = useState([0, 1]);
   const timerRef0 = useRef(null);
   const timerRef1 = useRef(null);
   const timerRef2 = useRef(null);
   const timerRefs = [timerRef0, timerRef1, timerRef2];
+  const [caret, setCaret] = useState([0, 1]);
   const canBackSpace = useRef(true);
   
   function handleChange(e) {
