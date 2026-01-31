@@ -3,6 +3,7 @@ import './App.css'
 import Arc from './Arc'
 import TimerInput2 from './TimerInput2'
 import StartPause from './StartPause'
+import ResetStop from './ResetStop'
 
 function App() {
   const [arcAngle, setArcAngle] = useState(359.99);
@@ -37,7 +38,7 @@ function App() {
   function resetTimer() {
     setTimeLeft(Infinity);
     setCachedTime(0);
-    
+    setArcAngle(359.99);
   }
 
   function resumeTimer() {
@@ -74,6 +75,15 @@ function App() {
     }
     else {
       pauseTimer();
+    }
+  }
+
+  function handleResetStop() {
+    if (isRunning) {
+      stopTimer();
+    }
+    else {
+      resetTimer();
     }
   }
 
@@ -120,20 +130,11 @@ function App() {
     <>
       <Arc radius={80} startAngle={0} endAngle={arcAngle} stroke="black" strokeWidth={1.5} />
       <br></br>
-      <button onClick={startTimer}>
-        
-      </button>
-      <button onClick={resumeTimer}>
-        <svg width="25px" height="25px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 16L7 16L15 8L7 -2.7818e-08L5 0L5 16Z" fill="#000000"/>
-        </svg>
-      </button>
-      <button onClick={pauseTimer}>Pause Timer</button>
-      <button onClick={stopTimer}>Stop Timer</button>
+      <StartPause isRunning={isRunning} handleStartPause={handleStartPause}/>
+      <ResetStop isRunning={isRunning} handleResetStop={handleResetStop}/>
       <br></br>
       <br></br>
       <TimerInput2 refs={timerRefs} ref0={timerRef0} ref1={timerRef1} ref2={timerRef2} timerValue={timerValue2} setTimerValue={setTimerValue2} caret={caret} setCaret={setCaret} canBackSpace={canBackSpace}/>
-      <StartPause isRunning={isRunning} handleStartPause = {handleStartPause}/>
     </>
   )
 }
