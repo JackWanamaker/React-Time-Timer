@@ -30,7 +30,26 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
         
     }
 
-    function threeNumHandler(e, currentBox) {
+    function threeNumHandler(e, boxIndex) {
+        const isSecondPosition = e.target.selectionStart === 1;
+        const isThirdPosition = e.target.selectionStart === 2;
+
+        const newTimerValue = timerValue.map((value, index) => {
+            if (index !== boxIndex) return value;
+
+            if (isSecondPosition) {
+                setCaret([parseInt(currentBox),1]);
+                return e.target.value[0] + e.target.value[2];
+            } else if (isThirdPosition) {
+                setCaret([parseInt(currentBox),2]);
+                return e.target.value[0] + e.target.value[1];
+            } else {
+                return e.target.value[2] + value[1];
+            }
+        });
+
+        setTimerValue(newTimerValue);
+        
         if (e.target.selectionStart == 1) {
             console.log("Here");
             setTimerValue([
@@ -76,7 +95,7 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
         //DENIALS
         
         //Denial of 2 character input (user selected a number and replaced it)
-        if (e.target.value.length != 1 & e.target.value.length != 3) {
+        if (e.target.value.length !== 1 & e.target.value.length !== 3) {
             return;
         }
         //ACCEPTANCES
