@@ -38,53 +38,18 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
             if (index !== boxIndex) return value;
 
             if (isSecondPosition) {
-                setCaret([parseInt(currentBox),1]);
+                setCaret([boxIndex, 1]);
                 return e.target.value[0] + e.target.value[2];
             } else if (isThirdPosition) {
-                setCaret([parseInt(currentBox),2]);
+                setCaret(boxIndex !==2 ? [boxIndex + 1, 0] : [boxIndex, 2]);
                 return e.target.value[0] + e.target.value[1];
             } else {
+                setCaret([boxIndex + 1, 1]);
                 return e.target.value[2] + value[1];
             }
         });
 
         setTimerValue(newTimerValue);
-        
-        if (e.target.selectionStart == 1) {
-            console.log("Here");
-            setTimerValue([
-                currentBox == "0" ? e.target.value[0] + e.target.value[2] : timerValue[0],
-                currentBox == "1" ? e.target.value[0] + e.target.value[2] : timerValue[1],
-                currentBox == "2" ? e.target.value[0] + e.target.value[2] : timerValue[2]
-            ]);
-            setCaret([parseInt(currentBox),1]);
-            }
-        else if (e.target.selectionStart == 2) {
-            setTimerValue([
-                currentBox == "0" ? e.target.value[0] + e.target.value[1] : timerValue[0],
-                currentBox == "1" ? e.target.value[0] + e.target.value[1] : timerValue[1],
-                currentBox == "2" ? e.target.value[0] + e.target.value[1] : timerValue[2]
-            ]);
-            setCaret([parseInt(currentBox),2]);
-            if (parseInt(currentBox) == 0 | parseInt(currentBox) == 1) {
-                console.log("I'm here");
-                setCaret([parseInt(currentBox) + 1, 0]);
-            }
-            }
-        else {
-            setTimerValue([
-                timerValue[0],
-                currentBox == "0" ? e.target.value[2] + timerValue[1][1] : timerValue[1],
-                currentBox == "1" ? e.target.value[2] + timerValue[2][1] : timerValue[2]
-            ]);
-            if (parseInt(currentBox) == 0 | parseInt(currentBox) == 1) {
-                console.log("I'm here");
-                setCaret([parseInt(currentBox) + 1, 1]);
-            }
-            else {
-                setCaret([2,2]);
-            }
-        }
     }
     
     function handleChange(e) {
@@ -96,6 +61,11 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
         
         //Denial of 2 character input (user selected a number and replaced it)
         if (e.target.value.length !== 1 & e.target.value.length !== 3) {
+            return;
+        }
+
+        //Denial of 3 character input where the input is put in at the very end (invalid)
+        if (e.target.value.length === 3 && caret[0] === 2 && caret[1] === 2) {
             return;
         }
         //ACCEPTANCES
