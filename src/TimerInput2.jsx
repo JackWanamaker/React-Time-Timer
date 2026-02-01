@@ -10,10 +10,8 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
     e.target.id is the id of the current box (0, 1, or 2)
     */
     
-    function oneNumHandler(e, currentBox) {
+    function oneNumHandler(e, boxIndex) {
         const isFirstPosition = e.target.selectionStart === 0;
-        const boxIndex = parseInt(currentBox);
-        
         const newTimerValue = timerValue.map((value, index) => {
             if (index !== boxIndex) return value;
 
@@ -73,7 +71,7 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
     function handleChange(e) {
         console.log("Handle Change");
         console.log(e.target.value);
-        const currentBox = e.target.id;
+        const boxIndex = parseInt(e.target.id);
         
         //DENIALS
         
@@ -85,11 +83,11 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
 
         //User removed a number (please make this a separate function later)
         else if (e.target.value.length == 1) {
-            oneNumHandler(e, currentBox);
+            oneNumHandler(e, boxIndex);
         }
         //User added a number (please make this a separate function later)
         else {
-            threeNumHandler(e, currentBox);
+            threeNumHandler(e, boxIndex);
         }
 
     }
