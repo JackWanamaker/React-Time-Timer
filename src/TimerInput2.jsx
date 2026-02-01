@@ -11,26 +11,25 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
     */
     
     function oneNumHandler(e, currentBox) {
-        if (e.target.selectionStart == 0) {
-            setTimerValue([
-                currentBox == "0" ? "0" + timerValue[0][1] : timerValue[0],
-                currentBox == "1" ? "0" + timerValue[1][1] : timerValue[1],
-                currentBox == "2" ? "0" + timerValue[2][1] : timerValue[2]
-            ]);
-            if (parseInt(currentBox) == 1 | parseInt(currentBox) == 2) {
-                console.log("Is it working?");
-                console.log(parseInt(currentBox) - 1);
-                setCaret([parseInt(currentBox) - 1, 2]);
-            }
-            }
-        else {
-            setTimerValue([
-                currentBox == "0" ? timerValue[0][0] + "0" : timerValue[0],
-                currentBox == "1" ? timerValue[1][0] + "0" : timerValue[1],
-                currentBox == "2" ? timerValue[2][0] + "0" : timerValue[2]
-            ]);
-            setCaret([parseInt(currentBox), e.target.selectionStart]);
+        const isFirstPosition = e.target.selectionStart === 0;
+        const boxIndex = parseInt(currentBox);
+        
+        const newTimerValue = timerValue.map((value, index) => {
+            if (index !== boxIndex) return value;
+
+            return isFirstPosition
+                ? "0" + value[1]
+                : value[0] + "0"
+            });
+
+        setTimerValue(newTimerValue);
+
+        if (isFirstPosition && boxIndex > 0) {
+            setCaret([boxIndex - 1, 2])
+        } else {
+            setCaret([boxIndex, e.target.selectionStart])
         }
+        
     }
 
     function threeNumHandler(e, currentBox) {
