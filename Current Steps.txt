@@ -1,0 +1,13 @@
+Okay, what are my next steps? I want to apply the same type of code to the threeNum handler
+
+It doesn't necessarily have to be the BEST for that situation, but I just want to apply the same
+philosophy.
+
+Okay so the structure of these two differs for sure. 
+
+Instead I am using the values from e.target.value
+
+Okay so the oneNumHandler uses the boolean to basically compress the two different cases into one statement. For this other one, I don't want to do that...
+
+
+
