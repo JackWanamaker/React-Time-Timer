@@ -134,7 +134,7 @@ function App() {
       <ResetStop isRunning={isRunning} handleResetStop={handleResetStop}/>
       <br></br>
       <br></br>
-      <TimerInput2 refs={timerRefs} ref0={timerRef0} ref1={timerRef1} ref2={timerRef2} timerValue={timerValue2} setTimerValue={setTimerValue2} caret={caret} setCaret={setCaret} canBackSpace={canBackSpace}/>
+      <TimerInput2 refs={timerRefs} ref0={timerRef0} ref1={timerRef1} ref2={timerRef2} timerValue={timerValue2} setTimerValue={setTimerValue2} caret={caret} setCaret={setCaret}/>
     </>
   )
 }

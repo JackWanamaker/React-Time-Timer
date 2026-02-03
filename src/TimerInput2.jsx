@@ -1,6 +1,6 @@
 import './TimerInput.css'
 
-const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackSpace}) => {
+const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret}) => {
 
     /*
     e.target.value is the value of the current box
@@ -111,31 +111,24 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
             if (currentID < 2 && e.target.selectionStart === 2 && caret[1] == 2) {
                 refs[currentID+1].current.focus();
                 refs[currentID+1].current.selectionStart = 0;
+                refs[currentID+1].current.selectionEnd = 0;
                 setCaret([currentID+1, 0]);
             } else {
-                console.log("Option Three");
                 setCaret([currentID, e.target.selectionStart]);
             }
         } else if (e.key === "Backspace") {
-            console.log(e.target.selectionStart);
-            if (e.target.selectionStart === 0 && caret[1] === 0 & (e.target.id === "1" || e.target.id === "2") & canBackSpace.current === true) {
-                if (e.target.id === "1") {
-                    refs[0].current.focus();
-                    setCaret([0, 1]);
-                    refs[0].current.selectionStart = 1;
-                    refs[0].current.selectionEnd = 1;
-                    setTimerValue([timerValue[0][0] + "0", timerValue[1], timerValue[2]]);
-                } else if (e.target.id === "2") {
-                    refs[1].current.focus();
-                    setCaret([1, 1]);
-                    refs[1].current.selectionStart = 1;
-                    refs[1].current.selectionEnd = 1;
-                    setTimerValue([timerValue[0], timerValue[1][0] + "0", timerValue[2]]);
-                }
-            }
-            canBackSpace.current = true;
+            if (currentID > 0 && e.target.selectionStart === 0 && caret[1] === 0) {
+                refs[currentID-1].current.focus();
+                setCaret([currentID-1, 1]);
+                refs[currentID-1].current.selectionStart = 1;
+                refs[currentID-1].current.selectionEnd = 1;
+                setTimerValue(currentID === 0
+                              ? [timerValue[0][0] + "0", timerValue[1], timerValue[2]]
+                              : [timerValue[0], timerValue[1][0] + "0", timerValue[2]]
+                )
         }
     }
+}
     
     return (
         <>
@@ -149,7 +142,6 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
             </div>
         </>
     )
-
 }
 
 export default TimerInput2
