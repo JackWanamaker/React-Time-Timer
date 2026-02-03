@@ -99,52 +99,33 @@ const TimerInput2 = ({refs, timerValue, setTimerValue, caret, setCaret, canBackS
     }
     
     function handleKeyboardKeys(e) {
+        const currentID = parseInt(e.target.id);
         if (e.key === "ArrowLeft") {
-            if ((e.target.id == "1" || e.target.id == "2") && e.target.selectionStart == 0 && caret[1] == 0) {
-                if (e.target.id == "1") {
-                    refs[0].current.focus();
-                    setCaret([0, 2]);
-                }
-                else if (e.target.id == "2") {
-                    refs[1].current.focus();
-                    setCaret([1, 2]);
-                }
+            if (currentID > 0 && e.target.selectionStart === 0 && caret[1] === 0) {
+                refs[currentID-1].current.focus();
+                setCaret([currentID-1, 2])
+            } else {
+                setCaret([currentID, e.target.selectionStart]);
             }
-            else {
-                setCaret([parseInt(e.target.id), e.target.selectionStart]);
-            }
-        }
-        else if (e.key === "ArrowRight") {
-            if ((e.target.id == "0" || e.target.id == "1") && e.target.selectionStart == 2 && caret[1] == 2) {
-                if (e.target.id == "0") {
-                    console.log("Option One")
-                    refs[1].current.focus();
-                    refs[1].current.selectionStart = 0;
-                    setCaret([1, 0]);
-                }
-                else if (e.target.id == "1") {
-                    console.log("Option Two")
-                    refs[2].current.focus();
-                    refs[2].current.selectionStart = 0;
-                    setCaret([2, 0]);
-                }
-            }
-            else {
+        } else if (e.key === "ArrowRight") {
+            if (currentID < 2 && e.target.selectionStart === 2 && caret[1] == 2) {
+                refs[currentID+1].current.focus();
+                refs[currentID+1].current.selectionStart = 0;
+                setCaret([currentID+1, 0]);
+            } else {
                 console.log("Option Three");
-                setCaret([parseInt(e.target.id), e.target.selectionStart]);
+                setCaret([currentID, e.target.selectionStart]);
             }
-        }
-        else if (e.key === "Backspace") {
+        } else if (e.key === "Backspace") {
             console.log(e.target.selectionStart);
-            if (e.target.selectionStart == 0 && caret[1] == 0 & (e.target.id == "1" || e.target.id == "2") & canBackSpace.current == true) {
-                if (e.target.id == "1") {
+            if (e.target.selectionStart === 0 && caret[1] === 0 & (e.target.id === "1" || e.target.id === "2") & canBackSpace.current === true) {
+                if (e.target.id === "1") {
                     refs[0].current.focus();
                     setCaret([0, 1]);
                     refs[0].current.selectionStart = 1;
                     refs[0].current.selectionEnd = 1;
                     setTimerValue([timerValue[0][0] + "0", timerValue[1], timerValue[2]]);
-                }
-                else if (e.target.id == "2") {
+                } else if (e.target.id === "2") {
                     refs[1].current.focus();
                     setCaret([1, 1]);
                     refs[1].current.selectionStart = 1;
